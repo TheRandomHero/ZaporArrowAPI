@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ZaporArrowAPI.Entities;
 
-namespace ZaporArrow.DbContexts
+namespace ZaporArrowAPI.DbContexts
 {
     public class ZaporArrowContext : DbContext
     {
