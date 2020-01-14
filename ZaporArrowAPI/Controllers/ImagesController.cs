@@ -14,12 +14,12 @@ namespace ZaporArrowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UploadController : ControllerBase
+    public class ImagesController : ControllerBase
     {
         private readonly IZaporArrowRepository _zaporArrowRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UploadController(IWebHostEnvironment env, IZaporArrowRepository repository)
+        public ImagesController(IWebHostEnvironment env, IZaporArrowRepository repository)
         {
             _zaporArrowRepository = repository;
             _webHostEnvironment = env;
