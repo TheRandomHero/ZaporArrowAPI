@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -32,11 +33,11 @@ namespace ZaporArrowAPI.Controllers
             {
                 if (imageFile.file.Length > 0)
                 {
-                    if (!Directory.Exists(_webHostEnvironment.WebRootPath + "\\Images\\"))
+                    if (!Directory.Exists(_webHostEnvironment.WebRootPath + "\\images\\"))
                     {
-                        Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\Images\\");
+                        Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\images\\");
                     }
-                    using (FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\Images\\" + imageFile.file.FileName))
+                    using (FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + imageFile.file.FileName))
                     {
                         imageFile.file.CopyTo(fileStream);
                         fileStream.Flush();
@@ -56,10 +57,10 @@ namespace ZaporArrowAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetImage([FromQuery]string imageName)
+        public async Task<IActionResult> GetImage([FromQuery]Guid arrowId)
         {
             var response = new HttpResponseMessage(HttpStatusCode.OK);
-            var path = "\\Images\\" + imageName;
+            var path = _zaporArrowRepository.GetImage(arrowId).ImageSource;
             path = _webHostEnvironment.WebRootPath + path;
 
             var ext = System.IO.Path.GetExtension(path);

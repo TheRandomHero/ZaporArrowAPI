@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ZaporArrowAPI.DbContexts;
+using ZaporArrowAPI.Services;
 
 namespace ZaporArrowAPI
 {
@@ -28,7 +29,9 @@ namespace ZaporArrowAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            
+
+            services.AddScoped<IZaporArrowRepository, ZaporArrowRepository>();
+
             services.AddDbContext<ZaporArrowContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("ZaporArrowDbConnection"));
@@ -53,7 +56,9 @@ namespace ZaporArrowAPI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllerRoute(
+                      name: "default",
+                      pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

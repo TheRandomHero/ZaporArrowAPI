@@ -58,5 +58,10 @@ namespace ZaporArrowAPI.Services
             return _zaporArrowContext.Arrows.Include(t => t.Images)
                 .Where(t => t.ArrowId == arrowId).FirstOrDefault();
         }
+
+        public Image GetImage(Guid id)
+        {
+            return _zaporArrowContext.Images.Where(t => t.ArrowId == id).FirstOrDefault();
+        }
     }
 }

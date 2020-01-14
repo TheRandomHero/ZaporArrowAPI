@@ -10,6 +10,7 @@ namespace ZaporArrowAPI.Services
     {
         IEnumerable<Arrow> GetAllArrowsWithImages();
         Arrow GetArrow(Guid id);
+        Image GetImage(Guid id);
         void AddArrow(Arrow arrow);
         void AddImage(Image image);
         void AddImageToArrow(Guid arrowId, Image image);
