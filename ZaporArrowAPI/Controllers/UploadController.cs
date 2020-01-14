@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,12 +16,12 @@ namespace ZaporArrowAPI.Controllers
     [ApiController]
     public class UploadController : ControllerBase
     {
-        // private readonly IZaporArrowRepository _zaporArrowRepository;
+        private readonly IZaporArrowRepository _zaporArrowRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public UploadController(IWebHostEnvironment env)
+        public UploadController(IWebHostEnvironment env, IZaporArrowRepository repository)
         {
-            //_zaporArrowRepository = repository;
+            _zaporArrowRepository = repository;
             _webHostEnvironment = env;
         }
 
@@ -52,6 +53,20 @@ namespace ZaporArrowAPI.Controllers
 
                 return ex.Message.ToString();
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetImage([FromQuery]string imageName)
+        {
+            var response = new HttpResponseMessage(HttpStatusCode.OK);
+            var path = "\\Images\\" + imageName;
+            path = _webHostEnvironment.WebRootPath + path;
+
+            var ext = System.IO.Path.GetExtension(path);
+
+            var image = System.IO.File.OpenRead(path);
+            return File(image, "image/jpeg");
+
         }
     }
 }
