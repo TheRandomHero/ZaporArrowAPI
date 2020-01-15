@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using ZaporArrowAPI.DbContexts;
 using ZaporArrowAPI.Services;
 using Newtonsoft.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ZaporArrowAPI
 {
@@ -22,11 +23,21 @@ namespace ZaporArrowAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
             services.AddControllers().AddNewtonsoftJson(
                 opt =>
                     opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
                 .AddJsonOptions(opt =>
                 opt.JsonSerializerOptions.PropertyNameCaseInsensitive = true);
+
 
             services.AddScoped<IZaporArrowRepository, ZaporArrowRepository>();
 
@@ -43,6 +54,8 @@ namespace ZaporArrowAPI
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
 
