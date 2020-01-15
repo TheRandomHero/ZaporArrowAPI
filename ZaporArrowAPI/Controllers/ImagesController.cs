@@ -57,17 +57,27 @@ namespace ZaporArrowAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetImage([FromQuery]Guid arrowId)
+        public async Task<IActionResult> GetArrowImage([FromQuery]Guid arrowId)
         {
-            var response = new HttpResponseMessage(HttpStatusCode.OK);
-            var path = _zaporArrowRepository.GetImage(arrowId).ImageSource;
-            path = _webHostEnvironment.WebRootPath + path;
+            try
+            {
+                var response = new HttpResponseMessage(HttpStatusCode.OK);
+                var path = _zaporArrowRepository.GetImage(arrowId).ImageSource;
+                path = _webHostEnvironment.WebRootPath + path;
 
-            var ext = System.IO.Path.GetExtension(path);
+                var ext = System.IO.Path.GetExtension(path);
 
-            var image = System.IO.File.OpenRead(path);
-            return File(image, "image/jpeg");
+                var image = System.IO.File.OpenRead(path);
+
+                return File(image, "image/jpeg");
+
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(400);
+            };
 
         }
-    }
+    }  
 }

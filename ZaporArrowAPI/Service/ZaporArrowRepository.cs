@@ -42,10 +42,15 @@ namespace ZaporArrowAPI.Services
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Arrow> GetAllArrowsWithImages()
+        public List<Guid> GetAllArrowsIds()
         {
-            return _zaporArrowContext.Arrows
-                .Include(t => t.Images).ToList();
+            var allArrows = _zaporArrowContext.Arrows.ToList();
+            List<Guid> ids = new List<Guid>();
+            foreach(var arrow in allArrows)
+            {
+                ids.Add(arrow.ArrowId);
+            }
+            return ids;
         }
 
         public Arrow GetArrow(Guid arrowId)

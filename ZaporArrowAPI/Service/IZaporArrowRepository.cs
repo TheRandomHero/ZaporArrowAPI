@@ -8,7 +8,7 @@ namespace ZaporArrowAPI.Services
 {
     public interface IZaporArrowRepository
     {
-        IEnumerable<Arrow> GetAllArrowsWithImages();
+        List<Guid> GetAllArrowsIds();
         Arrow GetArrow(Guid id);
         Image GetImage(Guid id);
         void AddArrow(Arrow arrow);
