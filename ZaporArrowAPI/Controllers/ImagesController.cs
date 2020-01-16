@@ -15,7 +15,7 @@ namespace ZaporArrowAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ImagesController : ControllerBase
+    public class ImagesController : Controller
     {
         private readonly IZaporArrowRepository _zaporArrowRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -37,12 +37,10 @@ namespace ZaporArrowAPI.Controllers
                     {
                         Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\images\\");
                     }
-                    using (FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + imageFile.file.FileName))
-                    {
-                        imageFile.file.CopyTo(fileStream);
-                        fileStream.Flush();
-                        return "\\Upload\\" + imageFile.file.FileName;
-                    }
+                    using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + imageFile.file.FileName);
+                    imageFile.file.CopyTo(fileStream);
+                    fileStream.Flush();
+                    return "\\Upload\\" + imageFile.file.FileName;
                 }
                 else
                 {
@@ -56,8 +54,8 @@ namespace ZaporArrowAPI.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetArrowImage([FromQuery]Guid arrowId)
+        [HttpGet("{arrowId:guid}")]
+        public async Task<IActionResult> GetArrowImage([FromRoute]Guid arrowId)
         {
             try
             {
@@ -78,6 +76,12 @@ namespace ZaporArrowAPI.Controllers
                 return StatusCode(400);
             };
 
+        }
+
+        [HttpGet("arrow/{arrowId:guid}")]
+        public JsonResult GetArrowDetails([FromRoute] Guid arrowId)
+        {
+            return Json(_zaporArrowRepository.GetArrow(arrowId));
         }
     }  
 }

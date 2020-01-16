@@ -54,7 +54,7 @@ namespace ZaporArrowAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
