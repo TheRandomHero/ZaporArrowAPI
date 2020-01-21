@@ -1,2 +1,2 @@
 # ZaporArrowAPI
-Zapor Arrow website api to upload and receive datas
+Zapor Arrow's api to upload pictures and receive datas
