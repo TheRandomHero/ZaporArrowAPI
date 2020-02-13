@@ -17,5 +17,7 @@ namespace ZaporArrowAPI.Entities
 
         [Required]
         public string ImageSource { get; set; }
+
+        public bool isProfilePicture { get; set; }
     }
 }

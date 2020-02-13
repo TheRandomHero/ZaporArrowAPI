@@ -2,8 +2,12 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/ZaporArrowAPI",
+      "sslPort": 0
+    },
     "iisExpress": {
-      "applicationUrl": "http://localhost:60578",
+      "applicationUrl": "http://localhost:63085",
       "sslPort": 44310
     }
   },

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZaporArrowAPI.Entities;
 using ZaporArrowAPI.Services;
+using ZaporArrowAPI.ViewModels;
 
 namespace ZaporArrowAPI.Controllers
 {
@@ -27,20 +28,30 @@ namespace ZaporArrowAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<string> Post([FromForm]UploadImage imageFile)
+        public async Task<string> Post([FromForm]ArrowViewModel model)
         {
             try
             {
-                if (imageFile.file.Length > 0)
+                if (model.PhotoFile.Length > 0)
                 {
                     if (!Directory.Exists(_webHostEnvironment.WebRootPath + "\\images\\"))
                     {
                         Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\images\\");
                     }
-                    using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + imageFile.file.FileName);
-                    imageFile.file.CopyTo(fileStream);
+                    string uniqueFileName = Guid.NewGuid().ToString()+ "_" + model.PhotoFile.FileName;
+                    using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName );
+                    model.PhotoFile.CopyTo(fileStream);
                     fileStream.Flush();
-                    return "\\Upload\\" + imageFile.file.FileName;
+
+                    Arrow newArrow = new Arrow
+                    {
+                        ArrowId = Guid.NewGuid(),
+                        Length = model.Length,
+                        Description = model.Description,
+                        Images = new List<Image>(),
+                    };
+
+                    return "\\Upload\\" + model.PhotoFile.FileName;
                 }
                 else
                 {
