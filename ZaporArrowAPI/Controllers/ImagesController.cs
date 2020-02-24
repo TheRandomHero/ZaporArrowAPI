@@ -39,7 +39,7 @@ namespace ZaporArrowAPI.Controllers
                         Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\images\\");
                     }
                     string uniqueFileName = Guid.NewGuid().ToString()+ "_" + model.PhotoFile.FileName;
-                    using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName );
+                    using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName);
                     model.PhotoFile.CopyTo(fileStream);
                     fileStream.Flush();
 
@@ -50,6 +50,17 @@ namespace ZaporArrowAPI.Controllers
                         Description = model.Description,
                         Images = new List<Image>(),
                     };
+
+                    Image newImage = new Image
+                    {
+                        ImageId = Guid.NewGuid(),
+                        ArrowId = newArrow.ArrowId,
+                        ImageSource = _webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName,
+                        isProfilePicture = true
+                    };
+
+                    _zaporArrowRepository.AddArrow(newArrow);
+                    _zaporArrowRepository.AddImage(newImage);
 
                     return "\\Upload\\" + model.PhotoFile.FileName;
                 }
@@ -70,9 +81,8 @@ namespace ZaporArrowAPI.Controllers
         {
             try
             {
-                var response = new HttpResponseMessage(HttpStatusCode.OK);
+                var response = new HttpResponseMessage(HttpStatusCode.OK); 
                 var path = _zaporArrowRepository.GetImage(arrowId).ImageSource;
-                path = _webHostEnvironment.WebRootPath + path;
 
                 var ext = System.IO.Path.GetExtension(path);
 
@@ -94,5 +104,5 @@ namespace ZaporArrowAPI.Controllers
         {
             return Json(_zaporArrowRepository.GetArrow(arrowId));
         }
-    }  
+    }
 }
