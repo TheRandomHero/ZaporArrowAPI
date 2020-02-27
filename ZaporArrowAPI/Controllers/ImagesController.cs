@@ -62,7 +62,7 @@ namespace ZaporArrowAPI.Controllers
                     _zaporArrowRepository.AddArrow(newArrow);
                     _zaporArrowRepository.AddImage(newImage);
 
-                    return "\\Upload\\" + model.PhotoFile.FileName;
+                    return newArrow.ArrowId.ToString();
                 }
                 else
                 {

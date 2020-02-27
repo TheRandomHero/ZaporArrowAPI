@@ -42,13 +42,13 @@ namespace ZaporArrowAPI.Services
             throw new NotImplementedException();
         }
 
-        public List<Guid> GetAllArrowsIds()
+        public List<Guid> GetAllProfilePictures()
         {
-            var allArrows = _zaporArrowContext.Arrows.ToList();
+            var profilePictures = _zaporArrowContext.Images.Where(t=> t.isProfilePicture == true).ToList();
             List<Guid> ids = new List<Guid>();
-            foreach(var arrow in allArrows)
+            foreach(var image in profilePictures)
             {
-                ids.Add(arrow.ArrowId);
+                ids.Add(image.imageId);
             }
             return ids;
         }
@@ -66,7 +66,7 @@ namespace ZaporArrowAPI.Services
 
         public Image GetImage(Guid id)
         {
-            return _zaporArrowContext.Images.Where(t => t.ArrowId == id).FirstOrDefault();
+            return _zaporArrowContext.Images.Where(t => t.ImageId == id).FirstOrDefault();
         }
     }
 }
