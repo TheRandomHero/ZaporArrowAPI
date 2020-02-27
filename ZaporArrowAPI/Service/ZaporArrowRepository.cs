@@ -48,7 +48,7 @@ namespace ZaporArrowAPI.Services
             List<Guid> ids = new List<Guid>();
             foreach(var image in profilePictures)
             {
-                ids.Add(image.imageId);
+                ids.Add(image.ImageId);
             }
             return ids;
         }

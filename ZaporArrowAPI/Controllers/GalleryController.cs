@@ -14,7 +14,7 @@ namespace ZaporArrowAPI.Controllers
         }
 
         [HttpGet]
-        public JsonResult GetAllArrowsIds()
+        public JsonResult GetAllProfilePicturesIds()
         {
             var result = _zaporArrowRepository.GetAllProfilePictures();
             return Json(result);

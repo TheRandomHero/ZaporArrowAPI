@@ -76,13 +76,13 @@ namespace ZaporArrowAPI.Controllers
             }
         }
 
-        [HttpGet("{arrowId:guid}")]
-        public async Task<IActionResult> GetArrowImage([FromRoute]Guid arrowId)
+        [HttpGet("{imgId:guid}")]
+        public async Task<IActionResult> GetArrowImage([FromRoute]Guid imgId)
         {
             try
             {
                 var response = new HttpResponseMessage(HttpStatusCode.OK); 
-                var path = _zaporArrowRepository.GetImage(arrowId).ImageSource;
+                var path = _zaporArrowRepository.GetImage(imgId).ImageSource;
 
                 var ext = System.IO.Path.GetExtension(path);
 
