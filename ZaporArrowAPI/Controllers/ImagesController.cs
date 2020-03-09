@@ -28,7 +28,7 @@ namespace ZaporArrowAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<string> Post([FromForm]ArrowViewModel model)
+        public async Task<string> PostNewArrow([FromForm]ArrowViewModel model)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace ZaporArrowAPI.Controllers
                     {
                         Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\images\\");
                     }
-                    string uniqueFileName = Guid.NewGuid().ToString()+ "_" + model.PhotoFile.FileName;
+                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.PhotoFile.FileName;
                     using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName);
                     model.PhotoFile.CopyTo(fileStream);
                     fileStream.Flush();
@@ -81,7 +81,7 @@ namespace ZaporArrowAPI.Controllers
         {
             try
             {
-                var response = new HttpResponseMessage(HttpStatusCode.OK); 
+                var response = new HttpResponseMessage(HttpStatusCode.OK);
                 var path = _zaporArrowRepository.GetImage(imgId).ImageSource;
 
                 var ext = "image/" + System.IO.Path.GetExtension(path);
@@ -105,19 +105,34 @@ namespace ZaporArrowAPI.Controllers
             return Json(_zaporArrowRepository.GetArrow(arrowId));
         }
 
-        [HttpDelete]
-        public IActionResult DeleteArrow(Guid id)
+
+        /// <summary>
+        /// Delete specific Arrow object and all the associated images
+        /// </summary>
+        /// <param name="arrowId">Id of required Arrow object</param>
+        /// <returns>200 OK if it was successfull or 404 Not found if Id doesn't exist. Otherwise exception thrown</returns>
+        [HttpDelete("{arrowId}")]
+        public async Task<IActionResult> Delete(Guid arrowId)
         {
             try
             {
-                var arrowEntity = _zaporArrowRepository.GetArrow(id);
+                var arrowEntity = _zaporArrowRepository.GetArrow(arrowId);
                 if(arrowEntity == null)
                 {
-                    return StatusCode(404, Json("Arrow under "+ id.ToString()+ " was not found"));
+                    return StatusCode(404, Json("Arrow under "+ arrowId.ToString()+ " was not found"));
                 }
                 else
                 {
+                    var images = _zaporArrowRepository.GetAllImageIdsWithSameArrowId(arrowId);
+                    foreach(var image in images)
+                    {
+                        if (System.IO.File.Exists(image.ImageSource))
+                        {
+                            System.IO.File.Delete(image.ImageSource);
+                        }
+                    }
                     _zaporArrowRepository.DeleteArrow(arrowEntity);
+
                     return StatusCode(200);
                 }
             }

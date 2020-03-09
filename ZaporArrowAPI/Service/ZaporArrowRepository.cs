@@ -23,13 +23,6 @@ namespace ZaporArrowAPI.Services
             _zaporArrowContext.SaveChanges();
         }
 
-        public void AddImageToArrow(Guid arrowId, Image image)
-        {
-            var theArrow = GetArrow(arrowId);
-            theArrow.Images.Add(image);
-            _zaporArrowContext.Images.Add(image);
-            _zaporArrowContext.SaveChanges();
-        }
 
         public void AddArrow(Arrow arrow)
         {
@@ -39,9 +32,21 @@ namespace ZaporArrowAPI.Services
 
         public void DeleteArrow(Arrow arrow)
         {
-  
-            _zaporArrowContext.Arrows.Remove(arrow);
-            _zaporArrowContext.SaveChanges();
+            if(arrow == null)
+            {
+                throw new ArgumentNullException(nameof(arrow));
+            }
+            else
+            {
+                var images = GetAllImageIdsWithSameArrowId(arrow.ArrowId);
+                foreach(var image in images)
+                {
+                    _zaporArrowContext.Images.Remove(image);
+                }
+                _zaporArrowContext.Arrows.Remove(arrow);
+                _zaporArrowContext.SaveChanges();
+
+            }
             
         }
 
@@ -54,6 +59,10 @@ namespace ZaporArrowAPI.Services
                 ids.Add(image.ImageId);
             }
             return ids;
+        }
+        public List<Image> GetAllImageIdsWithSameArrowId(Guid arrowId)
+        {
+            return _zaporArrowContext.Images.Where(i => i.ArrowId == arrowId).ToList();
         }
 
         public Arrow GetArrow(Guid arrowId)
@@ -76,5 +85,7 @@ namespace ZaporArrowAPI.Services
         {
             throw new NotImplementedException();
         }
+
+        
     }
 }

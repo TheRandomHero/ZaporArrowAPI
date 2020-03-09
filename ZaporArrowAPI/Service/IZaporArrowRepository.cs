@@ -11,9 +11,9 @@ namespace ZaporArrowAPI.Services
         List<Guid> GetAllProfilePictures();
         Arrow GetArrow(Guid id);
         Image GetImage(Guid id);
+        List<Image> GetAllImageIdsWithSameArrowId(Guid arrowId);
         void AddArrow(Arrow arrow);
         void AddImage(Image image);
-        void AddImageToArrow(Guid arrowId, Image image);
         void DeleteArrow(Arrow arrow);
         void UpdateArrowDetails(Arrow arrow);
     }
