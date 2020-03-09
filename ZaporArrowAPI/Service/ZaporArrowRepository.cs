@@ -39,7 +39,10 @@ namespace ZaporArrowAPI.Services
 
         public void DeleteArrow(Arrow arrow)
         {
-            throw new NotImplementedException();
+  
+            _zaporArrowContext.Arrows.Remove(arrow);
+            _zaporArrowContext.SaveChanges();
+            
         }
 
         public List<Guid> GetAllProfilePictures()
@@ -67,6 +70,11 @@ namespace ZaporArrowAPI.Services
         public Image GetImage(Guid id)
         {
             return _zaporArrowContext.Images.Where(t => t.ImageId == id).FirstOrDefault();
+        }
+
+        public void UpdateArrowDetails(Arrow arrow)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -84,17 +84,17 @@ namespace ZaporArrowAPI.Controllers
                 var response = new HttpResponseMessage(HttpStatusCode.OK); 
                 var path = _zaporArrowRepository.GetImage(imgId).ImageSource;
 
-                var ext = System.IO.Path.GetExtension(path);
+                var ext = "image/" + System.IO.Path.GetExtension(path);
 
-                var image = System.IO.File.OpenRead(path);
+                FileStream image = System.IO.File.OpenRead(path);
 
-                return File(image, "image/jpeg");
+                return File(image, ext);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                return StatusCode(400);
+                return StatusCode(400, Json(ex));
             };
 
         }
@@ -103,6 +103,28 @@ namespace ZaporArrowAPI.Controllers
         public JsonResult GetArrowDetails([FromRoute] Guid arrowId)
         {
             return Json(_zaporArrowRepository.GetArrow(arrowId));
+        }
+
+        [HttpDelete]
+        public IActionResult DeleteArrow(Guid id)
+        {
+            try
+            {
+                var arrowEntity = _zaporArrowRepository.GetArrow(id);
+                if(arrowEntity == null)
+                {
+                    return StatusCode(404, Json("Arrow under "+ id.ToString()+ " was not found"));
+                }
+                else
+                {
+                    _zaporArrowRepository.DeleteArrow(arrowEntity);
+                    return StatusCode(200);
+                }
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(400, Json(ex));
+            };
         }
     }
 }

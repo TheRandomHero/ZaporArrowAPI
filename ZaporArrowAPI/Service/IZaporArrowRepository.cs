@@ -15,5 +15,6 @@ namespace ZaporArrowAPI.Services
         void AddImage(Image image);
         void AddImageToArrow(Guid arrowId, Image image);
         void DeleteArrow(Arrow arrow);
+        void UpdateArrowDetails(Arrow arrow);
     }
 }
