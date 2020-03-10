@@ -81,6 +81,32 @@ namespace ZaporArrowAPI.Controllers
             }
         }
 
+        [HttpPost("{arrowId:guid}")]
+        public async Task<IActionResult> UploadImagesToExistingArrow(Guid arrowId, UploadImage image)
+        {
+            if(_zaporArrowRepository.GetArrow(arrowId) != null)
+            {
+
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + image.file.FileName;
+                using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName);
+                image.file.CopyTo(fileStream);
+                fileStream.Flush();
+
+                var newImage = new Image
+                {
+                    ImageId = Guid.NewGuid(),
+                    ArrowId = arrowId,
+                    ImageSource = _webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName,
+                    isProfilePicture = false,
+                };
+
+                return StatusCode(200, Json("Upload was successful"));
+            } else
+            {
+                return StatusCode(400, Json("Arrow does not exist under Id " + arrowId.ToString()));
+            }
+        }
+
         /// <summary>
         /// Retriever for static files in ZaporArrow web API
         /// </summary>
@@ -157,6 +183,12 @@ namespace ZaporArrowAPI.Controllers
             };
         }
 
+        /// <summary>
+        /// For updating existing arrow details
+        /// </summary>
+        /// <param name="arrowId">Required arrow's Id</param>
+        /// <param name="model">Required changes</param>
+        /// <returns></returns>
         [HttpPut("{arrowId}")]
         public async Task<IActionResult> UpdateArrowDetails(Guid arrowId,[FromForm]ArrowViewModel model)
         {

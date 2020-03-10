@@ -86,7 +86,7 @@ namespace ZaporArrowAPI.Services
         {
             var existingArrow = GetArrow(arrowId);
 
-            if(existingArrow != null)
+            if(existingArrow != null )
             {
                 existingArrow.Description = model.Description;
                 existingArrow.Length = model.Length;
