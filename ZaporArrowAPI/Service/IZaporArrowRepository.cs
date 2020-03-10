@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ZaporArrowAPI.Entities;
+using ZaporArrowAPI.ViewModels;
 
 namespace ZaporArrowAPI.Services
 {
@@ -15,6 +16,7 @@ namespace ZaporArrowAPI.Services
         void AddArrow(Arrow arrow);
         void AddImage(Image image);
         void DeleteArrow(Arrow arrow);
-        void UpdateArrowDetails(Arrow arrow);
+        void UpdateArrowDetails(Guid arrowId, ArrowViewModel model);
+
     }
 }

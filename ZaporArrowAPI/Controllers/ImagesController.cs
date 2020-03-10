@@ -48,7 +48,7 @@ namespace ZaporArrowAPI.Controllers
                     model.PhotoFile.CopyTo(fileStream);
                     fileStream.Flush();
 
-                    Arrow newArrow = new Arrow
+                    Arrow newArrow = new Arrow  /// New Arrow object
                     {
                         ArrowId = Guid.NewGuid(),
                         Length = model.Length,
@@ -56,7 +56,7 @@ namespace ZaporArrowAPI.Controllers
                         Images = new List<Image>(),
                     };
 
-                    Image newImage = new Image
+                    Image newImage = new Image  ///Image Object
                     {
                         ImageId = Guid.NewGuid(),
                         ArrowId = newArrow.ArrowId,
@@ -132,14 +132,14 @@ namespace ZaporArrowAPI.Controllers
             try
             {
                 var arrowEntity = _zaporArrowRepository.GetArrow(arrowId);
-                if(arrowEntity == null)
+                if (arrowEntity == null)
                 {
-                    return StatusCode(404, Json("Arrow under "+ arrowId.ToString()+ " was not found"));
+                    return StatusCode(404, Json("Arrow under " + arrowId.ToString() + " was not found"));
                 }
                 else
                 {
                     var images = _zaporArrowRepository.GetAllImageIdsWithSameArrowId(arrowId);
-                    foreach(var image in images)
+                    foreach (var image in images)
                     {
                         if (System.IO.File.Exists(image.ImageSource))
                         {
@@ -151,10 +151,22 @@ namespace ZaporArrowAPI.Controllers
                     return StatusCode(200);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return StatusCode(400, Json(ex));
             };
+        }
+
+        [HttpPut("{arrowId}")]
+        public async Task<IActionResult> UpdateArrowDetails(Guid arrowId,[FromForm]ArrowViewModel model)
+        {
+            if (!ModelState.IsValid) return StatusCode(400, Json("Model is not valid"));
+
+            _zaporArrowRepository.UpdateArrowDetails(arrowId, model);
+
+            return StatusCode(200, Json("Update was succesful"));
+           
+
         }
     }
 }

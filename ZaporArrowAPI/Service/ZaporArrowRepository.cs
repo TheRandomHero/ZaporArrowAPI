@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ZaporArrowAPI.DbContexts;
 using ZaporArrowAPI.Entities;
+using ZaporArrowAPI.ViewModels;
 
 namespace ZaporArrowAPI.Services
 {
@@ -81,9 +82,17 @@ namespace ZaporArrowAPI.Services
             return _zaporArrowContext.Images.Where(t => t.ImageId == id).FirstOrDefault();
         }
 
-        public void UpdateArrowDetails(Arrow arrow)
+        public void UpdateArrowDetails(Guid arrowId, ArrowViewModel model)
         {
-            throw new NotImplementedException();
+            var existingArrow = GetArrow(arrowId);
+
+            if(existingArrow != null)
+            {
+                existingArrow.Description = model.Description;
+                existingArrow.Length = model.Length;
+
+                _zaporArrowContext.SaveChanges();
+            }
         }
 
         
