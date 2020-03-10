@@ -81,10 +81,10 @@ namespace ZaporArrowAPI.Controllers
             }
         }
 
-        [HttpPost("{arrowId:guid}")]
-        public async Task<IActionResult> UploadImagesToExistingArrow(Guid arrowId, UploadImage image)
+        [HttpPost("{arrowId}")]
+        public async Task<IActionResult> UploadImagesToExistingArrow(Guid arrowId, [FromForm]UploadImage image)
         {
-            if(_zaporArrowRepository.GetArrow(arrowId) != null)
+            if(_zaporArrowRepository.GetArrow(arrowId) != null && image.file.Length > 0)
             {
 
                 var uniqueFileName = Guid.NewGuid().ToString() + "_" + image.file.FileName;
@@ -100,8 +100,12 @@ namespace ZaporArrowAPI.Controllers
                     isProfilePicture = false,
                 };
 
+                _zaporArrowRepository.AddImage(newImage);
+
+
                 return StatusCode(200, Json("Upload was successful"));
-            } else
+            } 
+            else
             {
                 return StatusCode(400, Json("Arrow does not exist under Id " + arrowId.ToString()));
             }
