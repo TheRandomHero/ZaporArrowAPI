@@ -13,6 +13,10 @@ namespace ZaporArrowAPI.Controllers
             _zaporArrowRepository = repository;
         }
 
+        /// <summary>
+        /// For Gallery page collects all the Ids where Images isProfilePicture field is true
+        /// </summary>
+        /// <returns>JSON of ids</returns>
         [HttpGet]
         public JsonResult GetAllProfilePicturesIds()
         {

@@ -27,6 +27,11 @@ namespace ZaporArrowAPI.Controllers
             _webHostEnvironment = env;
         }
 
+        /// <summary>
+        /// Create new Arrow object and a profile picture for beginning
+        /// </summary>
+        /// <param name="model">A view model with description, image,</param>
+        /// <returns>The new arrow id and frontend redirects to update page</returns>
         [HttpPost]
         public async Task<string> PostNewArrow([FromForm]ArrowViewModel model)
         {
@@ -76,6 +81,11 @@ namespace ZaporArrowAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Retriever for static files in ZaporArrow web API
+        /// </summary>
+        /// <param name="imgId">Id of required image</param>
+        /// <returns>Image file</returns>
         [HttpGet("{imgId:guid}")]
         public async Task<IActionResult> GetArrowImage([FromRoute]Guid imgId)
         {
@@ -99,6 +109,11 @@ namespace ZaporArrowAPI.Controllers
 
         }
 
+        /// <summary>
+        /// Get description from specific arrow for detailed page from DB
+        /// </summary>
+        /// <param name="arrowId">Id of required arrow</param>
+        /// <returns>JSON response with description and length about required arrow</returns>
         [HttpGet("arrow/{arrowId:guid}")]
         public JsonResult GetArrowDetails([FromRoute] Guid arrowId)
         {
