@@ -150,6 +150,11 @@ namespace ZaporArrowAPI.Controllers
             return Json(_zaporArrowRepository.GetArrow(arrowId));
         }
 
+        //[HttpGet("image/{arrowId:guid}")]
+        //public JsonResult GetAllImageForArrow([FromRoute] Guid arrowId)
+        //{
+        //    return Json(_zaporArrowRepository.GetAllConnectedImagesForArrow(arrowId));
+        //}
 
         /// <summary>
         /// Delete specific Arrow object and all the associated images
@@ -168,7 +173,7 @@ namespace ZaporArrowAPI.Controllers
                 }
                 else
                 {
-                    var images = _zaporArrowRepository.GetAllImageIdsWithSameArrowId(arrowId);
+                    var images = _zaporArrowRepository.GetAllImagesWithSameArrowId(arrowId);
                     foreach (var image in images)
                     {
                         if (System.IO.File.Exists(image.ImageSource))

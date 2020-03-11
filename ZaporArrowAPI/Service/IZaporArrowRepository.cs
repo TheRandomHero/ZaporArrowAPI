@@ -9,10 +9,11 @@ namespace ZaporArrowAPI.Services
 {
     public interface IZaporArrowRepository
     {
-        Dictionary<Guid, Guid> GetAllProfilePictures();
+        Dictionary<Guid, Guid> GetAllProfilePicturesIds();
+        List<Guid> GetAllConnectedImagesForArrow(Guid arrowId);
         Arrow GetArrow(Guid id);
         Image GetImage(Guid id);
-        List<Image> GetAllImageIdsWithSameArrowId(Guid arrowId);
+        List<Image> GetAllImagesWithSameArrowId(Guid arrowId);
         void AddArrow(Arrow arrow);
         void AddImage(Image image);
         void DeleteArrow(Arrow arrow);

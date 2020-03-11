@@ -40,7 +40,7 @@ namespace ZaporArrowAPI.Services
             }
             else
             {
-                var images = GetAllImageIdsWithSameArrowId(arrow.ArrowId);
+                var images = GetAllImagesWithSameArrowId(arrow.ArrowId);
                 foreach(var image in images)
                 {
                     _zaporArrowContext.Images.Remove(image);
@@ -52,7 +52,7 @@ namespace ZaporArrowAPI.Services
             
         }
 
-        public Dictionary<Guid, Guid> GetAllProfilePictures()
+        public Dictionary<Guid, Guid> GetAllProfilePicturesIds()
         {
             var profilePictures = _zaporArrowContext.Images.Where(t=> t.isProfilePicture == true).ToList();
             var ids = new Dictionary<Guid, Guid>();
@@ -62,7 +62,19 @@ namespace ZaporArrowAPI.Services
             }
             return ids;
         }
-        public List<Image> GetAllImageIdsWithSameArrowId(Guid arrowId)
+
+        public List<Guid> GetAllConnectedImagesForArrow(Guid arrowId)
+        {
+            var images = _zaporArrowContext.Images.Where(t => t.ArrowId == arrowId && t.isProfilePicture == false).ToList();
+            var ids = new List<Guid>();
+            foreach(var image in images)
+            {
+                ids.Add(image.ImageId);
+            }
+
+            return ids;
+        }
+        public List<Image> GetAllImagesWithSameArrowId(Guid arrowId)
         {
             return _zaporArrowContext.Images.Where(i => i.ArrowId == arrowId).ToList();
         }
