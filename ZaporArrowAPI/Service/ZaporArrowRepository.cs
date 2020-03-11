@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using ZaporArrowAPI.DbContexts;
 using ZaporArrowAPI.Entities;
 using ZaporArrowAPI.ViewModels;
@@ -51,13 +52,13 @@ namespace ZaporArrowAPI.Services
             
         }
 
-        public List<Guid> GetAllProfilePictures()
+        public Dictionary<Guid, Guid> GetAllProfilePictures()
         {
             var profilePictures = _zaporArrowContext.Images.Where(t=> t.isProfilePicture == true).ToList();
-            List<Guid> ids = new List<Guid>();
+            var ids = new Dictionary<Guid, Guid>();
             foreach(var image in profilePictures)
             {
-                ids.Add(image.ImageId);
+                ids.Add(image.ImageId, image.ArrowId);
             }
             return ids;
         }
@@ -86,7 +87,7 @@ namespace ZaporArrowAPI.Services
         {
             var existingArrow = GetArrow(arrowId);
 
-            if(existingArrow != null )
+            if(existingArrow != null && model != null)
             {
                 existingArrow.Description = model.Description;
                 existingArrow.Length = model.Length;
