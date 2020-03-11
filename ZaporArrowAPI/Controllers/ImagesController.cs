@@ -150,11 +150,11 @@ namespace ZaporArrowAPI.Controllers
             return Json(_zaporArrowRepository.GetArrow(arrowId));
         }
 
-        //[HttpGet("image/{arrowId:guid}")]
-        //public JsonResult GetAllImageForArrow([FromRoute] Guid arrowId)
-        //{
-        //    return Json(_zaporArrowRepository.GetAllConnectedImagesForArrow(arrowId));
-        //}
+        [HttpGet("image/{arrowId:guid}")]
+        public JsonResult GetAllImageForArrow([FromRoute] Guid arrowId)
+        {
+            return Json(_zaporArrowRepository.GetAllConnectedImagesForArrow(arrowId));
+        }
 
         /// <summary>
         /// Delete specific Arrow object and all the associated images
