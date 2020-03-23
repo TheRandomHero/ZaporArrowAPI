@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZaporArrowAPI.DbContexts;
 
 namespace ZaporArrowAPI.Migrations
 {
     [DbContext(typeof(ZaporArrowContext))]
-    partial class ZaporArrowContextModelSnapshot : ModelSnapshot
+    [Migration("20200323130331_IdentityExtended")]
+    partial class IdentityExtended
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

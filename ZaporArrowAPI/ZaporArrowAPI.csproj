@@ -13,6 +13,10 @@
     <Compile Remove="Migrations\20200213134247_IsProfilepicture_prop_added.Designer.cs" />
     <Compile Remove="Migrations\20200224084523_profilePictureMig.cs" />
     <Compile Remove="Migrations\20200224084523_profilePictureMig.Designer.cs" />
+    <Compile Remove="Migrations\20200323125219_IdentityExtended.cs" />
+    <Compile Remove="Migrations\20200323125219_IdentityExtended.Designer.cs" />
+    <Compile Remove="Migrations\20200323125757_IdentityExtended.cs" />
+    <Compile Remove="Migrations\20200323125757_IdentityExtended.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

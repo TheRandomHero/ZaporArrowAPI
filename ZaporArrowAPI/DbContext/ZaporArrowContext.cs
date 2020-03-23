@@ -8,7 +8,7 @@ using ZaporArrowAPI.Entities;
 
 namespace ZaporArrowAPI.DbContexts
 {
-    public class ZaporArrowContext : IdentityDbContext
+    public class ZaporArrowContext : IdentityDbContext<ApplicationUser>
     {
         public ZaporArrowContext(DbContextOptions<ZaporArrowContext> options)
             : base(options)

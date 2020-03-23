@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
+using ZaporArrowAPI.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace ZaporArrowAPI
 {
@@ -64,7 +67,7 @@ namespace ZaporArrowAPI
 
             services.AddScoped<IZaporArrowRepository, ZaporArrowRepository>();
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ZaporArrowContext>();
 
         }
@@ -95,6 +98,38 @@ namespace ZaporArrowAPI
                       name: "default",
                       pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private async Task CreateInitAdmin(IServiceProvider serviceProvider)
+        {
+            var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            IdentityResult identityRole;
+
+            var roleExist = await roleManager.RoleExistsAsync("Admin");
+
+            if(!roleExist)
+            {
+                identityRole = await roleManager.CreateAsync(new IdentityRole("Admin"));
+            }
+
+            var powerUser = new ApplicationUser
+            {
+                UserName = Configuration["AppSettings:Username"],
+            };
+
+            string UserPWD = Configuration["AppSettings:Password"];
+            var _user = await userManager.FindByNameAsync(Configuration["AppSettings:Username"]);
+
+            if(_user == null)
+            {
+                var createPowerUser = await userManager.CreateAsync(powerUser, UserPWD);
+                if (createPowerUser.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(powerUser, "Admin");
+                }
+            }
+
         }
 
     }
