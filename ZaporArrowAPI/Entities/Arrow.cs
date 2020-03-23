@@ -11,8 +11,6 @@ namespace ZaporArrowAPI.Entities
         [Key]
         public Guid ArrowId { get; set; }
 
-        public double Length { get; set; }
-
         [MaxLength(200)]
         public string Description { get; set; }
 

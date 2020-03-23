@@ -90,7 +90,6 @@ namespace ZaporArrowAPI.Services
             if(existingArrow != null && model != null)
             {
                 existingArrow.Description = model.Description;
-                existingArrow.Length = model.Length;
 
                 _zaporArrowContext.SaveChanges();
             }

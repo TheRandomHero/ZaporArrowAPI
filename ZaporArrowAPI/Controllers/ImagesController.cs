@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -51,7 +52,6 @@ namespace ZaporArrowAPI.Controllers
                     Arrow newArrow = new Arrow  /// New Arrow object
                     {
                         ArrowId = Guid.NewGuid(),
-                        Length = model.Length,
                         Description = model.Description,
                         Images = new List<Image>(),
                     };
@@ -80,7 +80,7 @@ namespace ZaporArrowAPI.Controllers
                 return ex.Message.ToString();
             }
         }
-
+        [Authorize]
         [HttpPost("{arrowId}")]
         public async Task<IActionResult> UploadImagesToExistingArrow(Guid arrowId, [FromForm]UploadImage image)
         {
@@ -156,6 +156,7 @@ namespace ZaporArrowAPI.Controllers
         /// </summary>
         /// <param name="arrowId">Id of required Arrow object</param>
         /// <returns>200 OK if it was successfull or 404 Not found if Id doesn't exist. Otherwise exception thrown</returns>
+        [Authorize]
         [HttpDelete("{arrowId}")]
         public async Task<IActionResult> Delete(Guid arrowId)
         {
@@ -193,6 +194,7 @@ namespace ZaporArrowAPI.Controllers
         /// <param name="arrowId">Required arrow's Id</param>
         /// <param name="model">Required changes</param>
         /// <returns></returns>
+        [Authorize]
         [HttpPut("{arrowId}")]
         public async Task<IActionResult> UpdateArrowDetails(Guid arrowId,[FromForm]ArrowViewModel model)
         {

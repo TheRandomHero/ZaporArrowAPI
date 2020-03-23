@@ -11,7 +11,6 @@ namespace ZaporArrowAPI.ViewModels
     {
         [MaxLength(200)]
         public string Description { get; set; }
-        public double Length { get; set; }
         public IFormFile PhotoFile { get; set; }
     }
 }
