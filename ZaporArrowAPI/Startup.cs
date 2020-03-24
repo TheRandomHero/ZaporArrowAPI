@@ -29,8 +29,8 @@ namespace ZaporArrowAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication("OAuth")
-                .AddJwtBearer("OAuth", options =>
+            services.AddAuthentication("Bearer")
+                .AddJwtBearer("Bearer", options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters()
                     {
@@ -60,26 +60,31 @@ namespace ZaporArrowAPI
                 .AddJsonOptions(opt =>
                 opt.JsonSerializerOptions.PropertyNameCaseInsensitive = true);
 
+
             services.AddDbContext<ZaporArrowContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("ZaporArrowDbConnection"));
             });
 
-            services.AddScoped<IZaporArrowRepository, ZaporArrowRepository>();
-
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ZaporArrowContext>();
+
+
+            services.AddScoped<IZaporArrowRepository, ZaporArrowRepository>();
+
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IServiceProvider serviceProvider)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
+            CreateInitAdmin(serviceProvider).Wait();
+
             app.UseCors("CorsPolicy");
 
             app.UseHttpsRedirection();
@@ -104,10 +109,10 @@ namespace ZaporArrowAPI
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            IdentityResult identityRole;
-
+            
             var roleExist = await roleManager.RoleExistsAsync("Admin");
 
+            IdentityResult identityRole;
             if(!roleExist)
             {
                 identityRole = await roleManager.CreateAsync(new IdentityRole("Admin"));
@@ -116,6 +121,7 @@ namespace ZaporArrowAPI
             var powerUser = new ApplicationUser
             {
                 UserName = Configuration["AppSettings:Username"],
+                IsAdmin = true,
             };
 
             string UserPWD = Configuration["AppSettings:Password"];
@@ -124,9 +130,11 @@ namespace ZaporArrowAPI
             if(_user == null)
             {
                 var createPowerUser = await userManager.CreateAsync(powerUser, UserPWD);
+
                 if (createPowerUser.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(powerUser, "Admin");
+                   var result = await userManager.AddToRoleAsync(powerUser, "Admin");
+
                 }
             }
 

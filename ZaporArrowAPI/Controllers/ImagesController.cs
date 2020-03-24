@@ -80,7 +80,7 @@ namespace ZaporArrowAPI.Controllers
                 return ex.Message.ToString();
             }
         }
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost("{arrowId}")]
         public async Task<IActionResult> UploadImagesToExistingArrow(Guid arrowId, [FromForm]UploadImage image)
         {
@@ -145,6 +145,7 @@ namespace ZaporArrowAPI.Controllers
         /// <param name="arrowId">Id of required arrow</param>
         /// <returns>JSON response with description and length about required arrow</returns>
         [HttpGet("arrow/{arrowId:guid}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles ="Admin")]
         public JsonResult GetArrowDetails([FromRoute] Guid arrowId)
         {
             return Json(_zaporArrowRepository.GetArrow(arrowId));
@@ -156,9 +157,9 @@ namespace ZaporArrowAPI.Controllers
         /// </summary>
         /// <param name="arrowId">Id of required Arrow object</param>
         /// <returns>200 OK if it was successfull or 404 Not found if Id doesn't exist. Otherwise exception thrown</returns>
+        [HttpDelete("{arrowId:Guid}")]
         [Authorize]
-        [HttpDelete("{arrowId}")]
-        public async Task<IActionResult> Delete(Guid arrowId)
+        public async Task<IActionResult> Delete([FromBody]Guid arrowId)
         {
             try
             {
@@ -194,8 +195,8 @@ namespace ZaporArrowAPI.Controllers
         /// <param name="arrowId">Required arrow's Id</param>
         /// <param name="model">Required changes</param>
         /// <returns></returns>
-        [Authorize]
         [HttpPut("{arrowId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateArrowDetails(Guid arrowId,[FromForm]ArrowViewModel model)
         {
             if (!ModelState.IsValid) return StatusCode(400, Json("Model is not valid"));

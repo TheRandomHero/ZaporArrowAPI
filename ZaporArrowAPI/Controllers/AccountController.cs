@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -29,10 +26,11 @@ namespace ZaporArrowAPI.Controllers
             _config = config;
         }
 
-        public IActionResult Login([FromBody]LoginViewModel login)
+        [HttpPost]
+        public async Task<IActionResult> Login([FromForm]LoginViewModel login)
         {
             IActionResult response = Unauthorized();
-            var user = AuthenticateUser(login);
+            ApplicationUser user = await AuthenticateUser(login);
 
             if(user != null)
             {
@@ -44,14 +42,14 @@ namespace ZaporArrowAPI.Controllers
             return response;
         }
 
-        private string GenerateJsonWebToken(LoginViewModel login)
+        private string GenerateJsonWebToken(ApplicationUser login)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credential = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, login.Username)
+                new Claim(JwtRegisteredClaimNames.Sub, login.UserName)
 
             };
 
@@ -68,20 +66,11 @@ namespace ZaporArrowAPI.Controllers
 
         }
 
-        private LoginViewModel AuthenticateUser(LoginViewModel login)
+        private async Task<ApplicationUser> AuthenticateUser(LoginViewModel login)
         {
-            var user = _userManager.FindByNameAsync(login.Username);
-            LoginViewModel verifiedUser = null;
+            var user = await _userManager.FindByNameAsync(login.Username);
 
-            if(user == null)
-            {
-                return null;
-            } else
-            {
-                verifiedUser = new LoginViewModel { Username = login.Username };
-            }
-
-            return verifiedUser;
+            return user;
         }
     }
 }
