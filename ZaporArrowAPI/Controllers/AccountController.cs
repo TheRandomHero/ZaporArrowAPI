@@ -43,13 +43,14 @@ namespace ZaporArrowAPI.Controllers
             return response;
         }
 
-        private async Task<string> GenerateJsonWebToken(ApplicationUser login)
+        private async Task<object> GenerateJsonWebToken(ApplicationUser login)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credential = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var user = await _userManager.FindByNameAsync(login.UserName);
-            var userRoles = await _userManager.GetRolesAsync(user);
+            var userRoles =  await _userManager.GetRolesAsync(user);
+
 
             var claims = new List<Claim>
             {
@@ -57,11 +58,9 @@ namespace ZaporArrowAPI.Controllers
 
             };
 
-            foreach (string role in userRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
-            }
+            AddCustomRolesToClaims(claims, userRoles);
 
+            
             var token = new JwtSecurityToken(_config["Jwt:Issuer"], 
                                             _config["Jwt:Audience"],
                                             claims,
@@ -70,7 +69,7 @@ namespace ZaporArrowAPI.Controllers
                                             signingCredentials: credential);
 
 
-            return  new JwtSecurityTokenHandler().WriteToken(token);
+            return   new JwtSecurityTokenHandler().WriteToken(token);
 
 
         }
@@ -80,6 +79,15 @@ namespace ZaporArrowAPI.Controllers
             var user = await _userManager.FindByNameAsync(login.Username);
 
             return user;
+        }
+
+        private void AddCustomRolesToClaims(List<Claim> claims, IEnumerable<string> roles)
+        {
+            foreach (string role in roles)
+            {
+                var roleClaim = new Claim(ClaimTypes.Role, role);
+                claims.Add(roleClaim);
+            }
         }
     }
 }

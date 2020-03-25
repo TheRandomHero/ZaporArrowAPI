@@ -94,7 +94,18 @@ namespace ZaporArrowAPI.Services
                 _zaporArrowContext.SaveChanges();
             }
         }
+        public List<Guid> GetAllConnectedImagesForArrow(Guid arrowId)
+        {
+            var images = _zaporArrowContext.Images.Where(t => t.ArrowId == arrowId && t.isProfilePicture == false).ToList();
+            var ids = new List<Guid>();
+            foreach (var image in images)
+            {
+                ids.Add(image.ImageId);
+            }
 
-        
+            return ids;
+        }
+
+
     }
 }
