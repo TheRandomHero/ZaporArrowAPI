@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -42,16 +43,24 @@ namespace ZaporArrowAPI.Controllers
             return response;
         }
 
-        private string GenerateJsonWebToken(ApplicationUser login)
+        private async Task<string> GenerateJsonWebToken(ApplicationUser login)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credential = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var user = await _userManager.FindByNameAsync(login.UserName);
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, login.UserName)
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
 
             };
+
+            foreach (string role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"], 
                                             _config["Jwt:Audience"],
@@ -61,7 +70,7 @@ namespace ZaporArrowAPI.Controllers
                                             signingCredentials: credential);
 
 
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return  new JwtSecurityTokenHandler().WriteToken(token);
 
 
         }
