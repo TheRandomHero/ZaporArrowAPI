@@ -29,6 +29,23 @@ namespace ZaporArrowAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddControllers()
+                .AddNewtonsoftJson(
+                opt =>
+                    opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
+                .AddJsonOptions(opt =>
+                opt.JsonSerializerOptions.PropertyNameCaseInsensitive = true);
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            });
+
+
             services.AddAuthentication("Bearer")
                 .AddJwtBearer("Bearer", options =>
                 {
@@ -44,22 +61,6 @@ namespace ZaporArrowAPI
                         
                     };
                 });
-
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader());
-            });
-
-            services.AddControllers().AddNewtonsoftJson(
-                opt =>
-                    opt.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
-                .AddJsonOptions(opt =>
-                opt.JsonSerializerOptions.PropertyNameCaseInsensitive = true);
-
 
             services.AddDbContext<ZaporArrowContext>(options =>
             {

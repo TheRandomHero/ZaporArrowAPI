@@ -43,22 +43,21 @@ namespace ZaporArrowAPI.Controllers
             return response;
         }
 
-        private async Task<object> GenerateJsonWebToken(ApplicationUser login)
+        private string GenerateJsonWebToken(ApplicationUser login)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credential = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var user = await _userManager.FindByNameAsync(login.UserName);
-            var userRoles =  await _userManager.GetRolesAsync(user);
+            var user =  _userManager.FindByNameAsync(login.UserName);
 
 
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Sub, login.UserName),
+                new Claim(ClaimTypes.Role, "Admin")
 
             };
 
-            AddCustomRolesToClaims(claims, userRoles);
 
             
             var token = new JwtSecurityToken(_config["Jwt:Issuer"], 

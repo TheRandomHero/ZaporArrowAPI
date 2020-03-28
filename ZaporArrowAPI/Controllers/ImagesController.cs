@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ZaporArrowAPI.Entities;
 using ZaporArrowAPI.Services;
@@ -28,63 +26,12 @@ namespace ZaporArrowAPI.Controllers
             _webHostEnvironment = env;
         }
 
-        /// <summary>
-        /// Create new Arrow object and a profile picture for beginning
-        /// </summary>
-        /// <param name="model">A view model with description, image,</param>
-        /// <returns>The new arrow id and frontend redirects to update page</returns>
-        [HttpPost]
-        public async Task<string> PostNewArrow([FromForm]ArrowViewModel model)
-        {
-            try
-            {
-                if (model.PhotoFile.Length > 0)
-                {
-                    if (!Directory.Exists(_webHostEnvironment.WebRootPath + "\\images\\"))
-                    {
-                        Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\images\\");
-                    }
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.PhotoFile.FileName;
-                    using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName);
-                    model.PhotoFile.CopyTo(fileStream);
-                    fileStream.Flush();
 
-                    Arrow newArrow = new Arrow  /// New Arrow object
-                    {
-                        ArrowId = Guid.NewGuid(),
-                        Description = model.Description,
-                        Images = new List<Image>(),
-                    };
-
-                    Image newImage = new Image  ///Image Object
-                    {
-                        ImageId = Guid.NewGuid(),
-                        ArrowId = newArrow.ArrowId,
-                        ImageSource = _webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName,
-                        isProfilePicture = true
-                    };
-
-                    _zaporArrowRepository.AddArrow(newArrow);
-                    _zaporArrowRepository.AddImage(newImage);
-
-                    return newArrow.ArrowId.ToString();
-                }
-                else
-                {
-                    return "Failed";
-                }
-            }
-            catch (Exception ex)
-            {
-
-                return ex.Message.ToString();
-            }
-        }
         [Authorize(Roles = "Admin")]
         [HttpPost("{arrowId}")]
         public async Task<IActionResult> UploadImagesToExistingArrow(Guid arrowId, [FromForm]UploadImage image)
         {
-            if(_zaporArrowRepository.GetArrow(arrowId) != null && image.file.Length > 0)
+            if (_zaporArrowRepository.GetArrow(arrowId) != null && image.file.Length > 0)
             {
 
                 var uniqueFileName = Guid.NewGuid().ToString() + "_" + image.file.FileName;
@@ -104,7 +51,7 @@ namespace ZaporArrowAPI.Controllers
 
 
                 return StatusCode(200, Json("Upload was successful"));
-            } 
+            }
             else
             {
                 return StatusCode(400, Json("Arrow does not exist under Id " + arrowId.ToString()));
@@ -139,17 +86,12 @@ namespace ZaporArrowAPI.Controllers
 
         }
 
-        /// <summary>
-        /// Get description from specific arrow for detailed page from DB
-        /// </summary>
-        /// <param name="arrowId">Id of required arrow</param>
-        /// <returns>JSON response with description and length about required arrow</returns>
-        [HttpGet("arrow/{arrowId:guid}")]
-        public JsonResult GetArrowDetails([FromRoute] Guid arrowId)
-        {
-            return Json(_zaporArrowRepository.GetArrow(arrowId));
-        }
 
+        /// <summary>
+        /// Get all existing images ids for specific arrow.
+        /// </summary>
+        /// <param name="arrowId">Id of the required arrow</param>
+        /// <returns>Images Ids</returns>
         [HttpGet("image/{arrowId:guid}")]
         public JsonResult GetAllImageForArrow([FromRoute] Guid arrowId)
         {
@@ -157,60 +99,31 @@ namespace ZaporArrowAPI.Controllers
         }
 
 
-        /// <summary>
-        /// Delete specific Arrow object and all the associated images
-        /// </summary>
-        /// <param name="arrowId">Id of required Arrow object</param>
-        /// <returns>200 OK if it was successfull or 404 Not found if Id doesn't exist. Otherwise exception thrown</returns>
-        [HttpDelete("{arrowId:Guid}")]
-        [Authorize]
-        public async Task<IActionResult> Delete([FromBody]Guid arrowId)
-        {
-            try
-            {
-                var arrowEntity = _zaporArrowRepository.GetArrow(arrowId);
-                if (arrowEntity == null)
-                {
-                    return StatusCode(404, Json("Arrow under " + arrowId.ToString() + " was not found"));
-                }
-                else
-                {
-                    var images = _zaporArrowRepository.GetAllImageIdsWithSameArrowId(arrowId);
-                    foreach (var image in images)
-                    {
-                        if (System.IO.File.Exists(image.ImageSource))
-                        {
-                            System.IO.File.Delete(image.ImageSource);
-                        }
-                    }
-                    _zaporArrowRepository.DeleteArrow(arrowEntity);
-
-                    return StatusCode(200);
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(400, Json(ex));
-            };
-        }
 
         /// <summary>
-        /// For updating existing arrow details
+        /// Delete single Image
         /// </summary>
-        /// <param name="arrowId">Required arrow's Id</param>
-        /// <param name="model">Required changes</param>
+        /// <param name="imageId"></param>
         /// <returns></returns>
-        [HttpPut("{arrowId}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateArrowDetails(Guid arrowId,[FromForm]ArrowViewModel model)
+        [HttpDelete("{imageId:guid}")]
+        [Authorize]
+        public async Task<IActionResult> DeleteImage([FromBody] Guid imageId)
         {
-            if (!ModelState.IsValid) return StatusCode(400, Json("Model is not valid"));
+            var imageToDelete = _zaporArrowRepository.GetImage(imageId);
 
-            _zaporArrowRepository.UpdateArrowDetails(arrowId, model);
+            if (System.IO.File.Exists(imageToDelete.ImageSource))
+            {
+                System.IO.File.Delete(imageToDelete.ImageSource);
 
-            return StatusCode(200, Json("Update was succesful"));
-           
+                _zaporArrowRepository.DeleteImage(imageToDelete);
 
+                return StatusCode(200);
+            }
+            else
+            {
+                return StatusCode(400, Json("Can't find the image"));
+            }
         }
     }
+
 }

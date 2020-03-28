@@ -52,6 +52,12 @@ namespace ZaporArrowAPI.Services
             
         }
 
+        public void DeleteImage(Image image)
+        {
+            _zaporArrowContext.Images.Remove(image);
+            _zaporArrowContext.SaveChanges();
+        }
+
         public Dictionary<Guid, Guid> GetAllProfilePictures()
         {
             var profilePictures = _zaporArrowContext.Images.Where(t=> t.isProfilePicture == true).ToList();

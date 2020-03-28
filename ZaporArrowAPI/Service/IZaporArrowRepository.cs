@@ -16,6 +16,7 @@ namespace ZaporArrowAPI.Services
         void AddArrow(Arrow arrow);
         void AddImage(Image image);
         void DeleteArrow(Arrow arrow);
+        void DeleteImage(Image image);
         void UpdateArrowDetails(Guid arrowId, ArrowViewModel model);
         public List<Guid> GetAllConnectedImagesForArrow(Guid arrowId);
 
