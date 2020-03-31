@@ -112,7 +112,7 @@ namespace ZaporArrowAPI.Controllers
                 }
                 else
                 {
-                    var images = _zaporArrowRepository.GetAllImageIdsWithSameArrowId(arrowId);
+                    var images = _zaporArrowRepository.GetAllImageWithSameArrowId(arrowId);
                     foreach (var image in images)
                     {
                         if (System.IO.File.Exists(image.ImageSource))
@@ -151,5 +151,4 @@ namespace ZaporArrowAPI.Controllers
         }
 
     }
-}
 }

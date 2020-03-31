@@ -12,7 +12,7 @@ namespace ZaporArrowAPI.Services
         Dictionary<Guid, Guid> GetAllProfilePictures();
         Arrow GetArrow(Guid id);
         Image GetImage(Guid id);
-        List<Image> GetAllImageIdsWithSameArrowId(Guid arrowId);
+        List<Image> GetAllImageWithSameArrowId(Guid arrowId);
         void AddArrow(Arrow arrow);
         void AddImage(Image image);
         void DeleteArrow(Arrow arrow);
