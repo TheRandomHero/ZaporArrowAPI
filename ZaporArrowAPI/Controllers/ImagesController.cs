@@ -92,7 +92,7 @@ namespace ZaporArrowAPI.Controllers
         /// </summary>
         /// <param name="arrowId">Id of the required arrow</param>
         /// <returns>Images Ids</returns>
-        [HttpGet("image/{arrowId:guid}")]
+        [HttpGet("getall/{arrowId:guid}")]
         public JsonResult GetAllImageForArrow([FromRoute] Guid arrowId)
         {
             return Json(_zaporArrowRepository.GetAllConnectedImagesForArrow(arrowId));

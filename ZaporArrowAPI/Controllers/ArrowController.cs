@@ -31,7 +31,7 @@ namespace ZaporArrowAPI.Controllers
         /// </summary>
         /// <param name="arrowId">Id of required arrow</param>
         /// <returns>JSON response with description and length about required arrow</returns>
-        [HttpGet("arrow/{arrowId:guid}")]
+        [HttpGet("arrowDescription/{arrowId:guid}")]
         public JsonResult GetArrowDetails([FromRoute] Guid arrowId)
         {
             return Json(_zaporArrowRepository.GetArrow(arrowId));
