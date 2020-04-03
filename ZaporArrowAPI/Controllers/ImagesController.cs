@@ -27,8 +27,8 @@ namespace ZaporArrowAPI.Controllers
         }
 
 
-        [Authorize(Roles = "Admin")]
         [HttpPost("{arrowId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UploadImagesToExistingArrow(Guid arrowId, [FromForm]UploadImage image)
         {
             if (_zaporArrowRepository.GetArrow(arrowId) != null && image.file.Length > 0)
@@ -92,7 +92,7 @@ namespace ZaporArrowAPI.Controllers
         /// </summary>
         /// <param name="arrowId">Id of the required arrow</param>
         /// <returns>Images Ids</returns>
-        [HttpGet("image/{arrowId:guid}")]
+        [HttpGet("getall/{arrowId:guid}")]
         public JsonResult GetAllImageForArrow([FromRoute] Guid arrowId)
         {
             return Json(_zaporArrowRepository.GetAllConnectedImagesForArrow(arrowId));
