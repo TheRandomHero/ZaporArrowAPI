@@ -43,6 +43,7 @@ namespace ZaporArrowAPI.Controllers
         /// <param name="model">A view model with description, image,</param>
         /// <returns>The new arrow id and frontend redirects to update page</returns>
         [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<string> PostNewArrow([FromForm]ArrowViewModel model)
         {
             try
@@ -99,9 +100,9 @@ namespace ZaporArrowAPI.Controllers
         /// </summary>
         /// <param name="arrowId">Id of required Arrow object</param>
         /// <returns>200 OK if it was successfull or 404 Not found if Id doesn't exist. Otherwise exception thrown</returns>
-        [HttpDelete("{arrowId:Guid}")]
-        [Authorize]
-        public async Task<IActionResult> Delete([FromBody]Guid arrowId)
+        [HttpDelete]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<IActionResult> Delete([FromQuery]Guid arrowId)
         {
             try
             {
@@ -113,13 +114,17 @@ namespace ZaporArrowAPI.Controllers
                 else
                 {
                     var images = _zaporArrowRepository.GetAllImageWithSameArrowId(arrowId);
-                    foreach (var image in images)
+                    if(images != null)
                     {
-                        if (System.IO.File.Exists(image.ImageSource))
+                        foreach (var image in images)
                         {
-                            System.IO.File.Delete(image.ImageSource);
+                            if (System.IO.File.Exists(image.ImageSource))
+                            {
+                                System.IO.File.Delete(image.ImageSource);
+                            }
                         }
                     }
+
                     _zaporArrowRepository.DeleteArrow(arrowEntity);
 
                     return StatusCode(200);
@@ -138,7 +143,7 @@ namespace ZaporArrowAPI.Controllers
         /// <param name="model">Required changes</param>
         /// <returns></returns>
         [HttpPut("{arrowId}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> UpdateArrowDetails(Guid arrowId, [FromForm]ArrowViewModel model)
         {
             if (!ModelState.IsValid) return StatusCode(400, Json("Model is not valid"));

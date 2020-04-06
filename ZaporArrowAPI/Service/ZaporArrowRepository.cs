@@ -149,7 +149,7 @@ namespace ZaporArrowAPI.Services
         /// <returns>List of Ids</returns>
         public List<Guid> GetAllConnectedImagesForArrow(Guid arrowId)
         {
-            var images = _zaporArrowContext.Images.Where(t => t.ArrowId == arrowId && t.isProfilePicture == false).ToList();
+            var images = _zaporArrowContext.Images.Where(t => t.ArrowId == arrowId).ToList();
             var ids = new List<Guid>();
             foreach (var image in images)
             {

@@ -26,9 +26,8 @@ namespace ZaporArrowAPI.Controllers
             _webHostEnvironment = env;
         }
 
-
-        [Authorize(Roles = "Admin")]
         [HttpPost("{arrowId}")]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
         public async Task<IActionResult> UploadImagesToExistingArrow(Guid arrowId, [FromForm]UploadImage image)
         {
             if (_zaporArrowRepository.GetArrow(arrowId) != null && image.file.Length > 0)
@@ -50,7 +49,7 @@ namespace ZaporArrowAPI.Controllers
                 _zaporArrowRepository.AddImage(newImage);
 
 
-                return StatusCode(200, Json("Upload was successful"));
+                return GetAllImageForArrow(arrowId);
             }
             else
             {
@@ -105,9 +104,9 @@ namespace ZaporArrowAPI.Controllers
         /// </summary>
         /// <param name="imageId"></param>
         /// <returns></returns>
-        [HttpDelete("{imageId:guid}")]
-        [Authorize]
-        public async Task<IActionResult> DeleteImage([FromBody] Guid imageId)
+        [HttpDelete]
+        [Authorize(AuthenticationSchemes = "Bearer", Roles = "Admin")]
+        public async Task<IActionResult> DeleteImage([FromQuery] Guid imageId)
         {
             var imageToDelete = _zaporArrowRepository.GetImage(imageId);
 
