@@ -61,10 +61,20 @@ namespace ZaporArrowAPI
                     };
                 });
 
-            services.AddDbContext<ZaporArrowContext>(options =>
-            {
-                options.UseSqlServer(Configuration.GetConnectionString("ZaporArrowDbConnection"));
-            });
+            if(Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
+                services.AddDbContext<ZaporArrowContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("ZaporArrowDbConnection_prod"));
+                });
+            else
+                services.AddDbContext<ZaporArrowContext>(options =>
+                {
+                    options.UseSqlServer(Configuration.GetConnectionString("ZaporArrowDbConnection"));
+                });
+
+            services.BuildServiceProvider()
+                .GetService<ZaporArrowContext>().Database
+                .Migrate();
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<ZaporArrowContext>();

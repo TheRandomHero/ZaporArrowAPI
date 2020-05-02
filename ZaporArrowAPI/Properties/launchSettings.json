@@ -17,7 +17,7 @@
       "commandName": "IISExpress",
       "launchUrl": "api/Upload",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     },
     "ZaporArrowAPI": {
