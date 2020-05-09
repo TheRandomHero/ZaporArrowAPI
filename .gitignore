@@ -16,6 +16,7 @@
 
 #appSettings
 **/appsettings.local.json
+**/appsettings.json
 
 # Build results
 [Dd]ebug/
