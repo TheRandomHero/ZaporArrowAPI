@@ -54,6 +54,7 @@ namespace ZaporArrowAPI.Controllers
                     {
                         Directory.CreateDirectory(_webHostEnvironment.WebRootPath + "\\images\\");
                     }
+
                     string uniqueFileName = Guid.NewGuid().ToString() + "_" + model.PhotoFile.FileName;
                     using FileStream fileStream = System.IO.File.Create(_webHostEnvironment.WebRootPath + "\\images\\" + uniqueFileName);
                     model.PhotoFile.CopyTo(fileStream);
